@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+AMQP_PORT=${1:-5672}
+HTTP_PORT=1$AMQP_PORT
+NAME=rabbitmq-$AMQP_PORT
+
+echo "Launching $NAME on ports $AMQP_PORT and  $HTTP_PORT...."
+
+docker network inspect rabbitmq_net >/dev/null 2>&1 || docker network create rabbitmq_net
+docker rm -f $NAME 2>/dev/null || echo "$NAME was not running"
+docker run -d --name $NAME --net rabbitmq_net \
+    -p $HTTP_PORT:15672 -p $AMQP_PORT:5672 \
+    -v $SCRIPT/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro \
+    -v $SCRIPT/enabled_plugins:/etc/rabbitmq/enabled_plugins \
+    rabbitmq:3.8-rc-management

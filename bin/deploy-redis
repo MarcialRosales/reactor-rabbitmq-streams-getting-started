@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+docker rm -f redis 2> /dev/null || echo "redis was not running"
+docker run -d --name redis -p 6379:6379 redis

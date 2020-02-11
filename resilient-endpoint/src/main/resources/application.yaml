@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: resilient-endpoint
+
+logging:
+  pattern.console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-40.40logger{1}){cyan} %msg %n"
+  level:
+    com.pivotal.rabbitmq.gettingstarted: debug
+    com.pivotal.rabbitmq.stream: warn
+
+rabbit:
+  default-endpoint-name: cluster
+  endpoints:
+    standalone:
+      username: guest
+      password: guest
+      host: localhost
+      port: 5672
+    cluster:
+      username: guest
+      password: guest
+      addresses: localhost:5673,localhost:5674,localhost:5675
+      managementAddresses: localhost:15673,localhost:15674,localhost:15675
+
+---
+spring.profiles: retry-2-times
+rabbit:
+  endpoints:
+    standalone:
+      connection:
+        retryMax: 2
+        timeout: 5s
+        randomBackoff:
+          firstBackoff:
+          maxBackoff:
+    cluster:
+      connection:
+        retryMax: 2
+        timeout: 5s
