@@ -1,26 +1,25 @@
 package com.pivotal.rabbitmq.gettingstarted;
 
 import com.pivotal.rabbitmq.RabbitEndpointService;
-import com.pivotal.rabbitmq.stream.ProducerStream;
 import com.pivotal.rabbitmq.stream.Transaction;
 import com.pivotal.rabbitmq.stream.TransactionalConsumerStream;
 import com.pivotal.rabbitmq.stream.TransactionalProducerStream;
-import com.pivotal.rabbitmq.topologies.BroadcastTopology;
 import com.pivotal.rabbitmq.topology.TopologyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import reactor.core.publisher.Flux;
-import reactor.util.function.Tuples;
 
 import java.time.Duration;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @SpringBootApplication
 public class ReliableSendOfReceivedEventApplication {
@@ -41,15 +40,59 @@ public class ReliableSendOfReceivedEventApplication {
 			this.name = name;
 		}
 
-		private Consumer<TopologyBuilder> topology() {
+		public String exchange() {
+			return name;
+		}
+
+		public String queue() {
+			return name;
+		}
+
+	}
+
+	class InputNumbers extends Numbers {
+		public InputNumbers() {
+			super("input-numbers");
+		}
+		Consumer<TopologyBuilder> forProducer() {
+			return (topologyBuilder) -> topologyBuilder
+					.declareExchange(name)
+					;
+		}
+		Consumer<TopologyBuilder> forConsumer() {
+			return (topologyBuilder) -> topologyBuilder
+					.declareQueue(name)
+						.boundTo(name)
+						.withMaxLength(10)
+					;
+		}
+	}
+	class MultipliedNumbers extends Numbers {
+		public MultipliedNumbers() {
+			super("multiplied-numbers");
+		}
+
+		Consumer<TopologyBuilder> forProducer() {
+			final String ae = name.concat("-ae");
+			return topologyBuilder -> topologyBuilder
+					.declareExchange(name)
+						.withAlternateExchange(ae)
+					.and()
+					.declareExchange(ae)
+					.and()
+					.declareQueue(ae)
+						.boundTo(ae);
+		}
+		Consumer<TopologyBuilder> forConsumer() {
 			return (topologyBuilder) -> topologyBuilder
 					.declareExchange(name)
 					.and()
 					.declareQueue(name)
 						.boundTo(name)
-						;
+					;
 		}
 	}
+
 	@Bean
 	@ConditionalOnProperty(name = "role", havingValue = "help", matchIfMissing = true)
 	public CommandLineRunner help() {
@@ -59,25 +102,26 @@ public class ReliableSendOfReceivedEventApplication {
 			System.out.println("./run --role=receiveMultipliedNumbers");
 		};
 	}
-	Numbers numbers = new Numbers("input-numbers");
-	Numbers multipliedNumbers = new Numbers("multiplied-numbers");
+	InputNumbers inputNumbersTopology = new InputNumbers();
+	MultipliedNumbers multipliedNumbers = new MultipliedNumbers();
 
 		@Bean
 	@ConditionalOnProperty(name = "role", havingValue = "produceNumbers", matchIfMissing = false)
 	public CommandLineRunner produceNumbers() {
 		return (args) -> {
 
-
 			Flux<Integer> streamOfNumbersToSend = Flux
-				.range(1, 100)
-				//.delayElements(Duration.ofSeconds(1))
-				.doOnNext(number -> log.info("Generated: {}", number));
+				.range(1, 100);
+
 // @formatter:off
 			rabbit
-				.declareTopology(numbers.topology())
+				.declareTopology(inputNumbersTopology.forProducer())
 				.createProducerStream(Integer.class)
 				.route()
-					.toExchange(numbers.name)
+					.toExchange(inputNumbersTopology.exchange())
+					.and()
+					.whenUnroutable()
+						.alwaysRetry(Duration.ofSeconds(2))
 				.then()
 				.send(streamOfNumbersToSend)
 				.doOnNext(number -> log.info("Sent: {}", number))
@@ -88,27 +132,36 @@ public class ReliableSendOfReceivedEventApplication {
 
 
 	@Bean
-	@ConditionalOnProperty(name = "role", havingValue = "receiveMultiplyAndSend", matchIfMissing = false)
-	public CommandLineRunner receiveMultiplyAndSend() {
+	@ConditionalOnProperty(name = "role", havingValue = "multiplier", matchIfMissing = false)
+	public CommandLineRunner multiplier() {
 		return (args) -> {
 
 // @formatter:off
+			// Receive input numbers
+			TransactionalConsumerStream<Integer> transactionalStreamOfNumbers = rabbit
+					.declareTopology(inputNumbersTopology.forConsumer())
+					.createTransactionalConsumerStream(inputNumbersTopology.queue(), Integer.class)
+					.withPrefetch(10)
+					.ackEvery(5, Duration.ofSeconds(5));
 
-			Flux<Transaction<Integer>> streamOfReceivedNumbers = rabbit
-				.declareTopology(numbers.topology())
-				.createTransactionalConsumerStream(numbers.name, Integer.class)
-				.receive();
+			Flux<Transaction<Integer>> receivedNumbers = transactionalStreamOfNumbers.receive();
 
-			Flux<Transaction<Long>> streamOfMultipliedNumbers = streamOfReceivedNumbers
+			// Multiply them
+			Flux<Transaction<Long>> multipliedNumbers = receivedNumbers
 				.map(txNumber -> txNumber.map(txNumber.get() * 2L));
 
-			Flux<Transaction<Long>> streamOfSentNumbers = rabbit
-				.declareTopology(multipliedNumbers.topology())
-				.createTransactionalProducerStream(Long.class)
-				.route()
-					.toExchange(multipliedNumbers.name)
-				.then()
-				.send(streamOfMultipliedNumbers);
+			// And send
+			TransactionalProducerStream<Long> streamOfMultipliedSentNumbers = rabbit
+					.declareTopology(this.multipliedNumbers.forProducer())
+					.createTransactionalProducerStream(Long.class)
+					.route()
+						.toExchange(this.multipliedNumbers.exchange())
+					.then();
+
+			Flux<Transaction<Long>> streamOfSentNumbers = streamOfMultipliedSentNumbers
+				.send(multipliedNumbers)
+				.doOnNext(n -> log.info("Sent multiplied number {}", n.get()))
+				.delayElements(Duration.ofMillis(250));
 
 			streamOfSentNumbers
 				.subscribe(Transaction::commit);
@@ -124,14 +177,28 @@ public class ReliableSendOfReceivedEventApplication {
 
 // @formatter:off
 			rabbit
-				.declareTopology(multipliedNumbers.topology())
-				.createTransactionalConsumerStream(multipliedNumbers.name, Long.class)
+				.declareTopology(multipliedNumbers.forConsumer())
+				.createTransactionalConsumerStream(multipliedNumbers.queue(), Long.class)
 				.receive()
+				.transform(eliminateDuplicates())
 				.doOnNext(txNumber -> log.info("Received {}", txNumber.get()))
 				.subscribe(Transaction::commit);
 // @formatter:on
 
 		};
+	}
+
+	private Function<Flux<Transaction<Long>>, Flux<Transaction<Long>>> eliminateDuplicates() {
+		Set<Long> receivedNumbers = new HashSet<>();
+		return txNumbers -> txNumbers
+				.filter(txNumber -> {
+					boolean duplicate = !receivedNumbers.add(txNumber.get());
+					if (duplicate) {
+						log.warn("Found duplicate {}", txNumber.get());
+					}
+					return !duplicate;
+				})
+				.doOnDiscard(Transaction.class, Transaction::commit);
 	}
 
 }
