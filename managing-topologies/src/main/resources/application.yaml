@@ -9,8 +9,8 @@ rabbit:
       port: 5672
       managementPort: 15672
 
-role: plain-simple
-
+#role: plain-simple
+role: shipmentTopology
 ---
 spring.profiles: cluster
 

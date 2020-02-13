@@ -2,7 +2,9 @@ package com.pivotal.rabbitmq.gettingstarted;
 
 import com.pivotal.rabbitmq.RabbitEndpointService;
 import com.pivotal.rabbitmq.gettingstarted.schemas.Shipment;
+import com.pivotal.rabbitmq.stream.Transaction;
 import com.pivotal.rabbitmq.topology.TopologyBuilder;
+import org.apache.avro.generic.GenericData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +72,21 @@ public class Publishers {
 					.doOnNext((data) -> log.info("Sent {}", data))
 					.blockLast()
 			;
+		};
+	}
+	@Bean
+	@ConditionalOnProperty(name = "role", havingValue = "auditor", matchIfMissing = false)
+	public CommandLineRunner auditor(
+			@Qualifier("auditSubscriberTopology")Consumer<TopologyBuilder> auditTopology) {
+		return (args) -> {
+			rabbit
+					.declareTopology(auditTopology)
+					.createTransactionalConsumerStream("shipment-audit", GenericData.Record.class)
+					.receive()
+					.doOnNext(txShipment -> log.info("Received shipment {} - {}.{}", txShipment.get().get("id"),
+							txShipment.get().get("category_1"), txShipment.get().get("category_2")))
+					.subscribe(Transaction::commit);
+
 		};
 	}
 

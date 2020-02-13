@@ -120,8 +120,9 @@ public class ReliableSendOfReceivedEventApplication {
 				.route()
 					.toExchange(inputNumbersTopology.exchange())
 					.and()
-					.whenUnroutable()
-						.alwaysRetry(Duration.ofSeconds(2))
+					.whenNackByBroker().alwaysRetry(Duration.ofSeconds(2))
+					.and()
+					.whenUnroutable().alwaysRetry(Duration.ofSeconds(2))
 				.then()
 				.send(streamOfNumbersToSend)
 				.doOnNext(number -> log.info("Sent: {}", number))
@@ -161,7 +162,7 @@ public class ReliableSendOfReceivedEventApplication {
 			Flux<Transaction<Long>> streamOfSentNumbers = streamOfMultipliedSentNumbers
 				.send(multipliedNumbers)
 				.doOnNext(n -> log.info("Sent multiplied number {}", n.get()))
-				.delayElements(Duration.ofMillis(250));
+				.delayElements(Duration.ofSeconds(1));
 
 			streamOfSentNumbers
 				.subscribe(Transaction::commit);

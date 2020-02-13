@@ -297,7 +297,7 @@ public class ManagingTopologiesApplication {
 	}
 
 	@Bean
-	@ConditionalOnProperty(name = "role", havingValue = "shipmentTopology", matchIfMissing = false)
+	@ConditionalOnProperty(name = "role", havingValue = "declareShipmentTopology", matchIfMissing = false)
 	public CommandLineRunner declareShipmentTopology() {
 		// @formatter:off
 		return (args) -> {
@@ -335,7 +335,8 @@ public class ManagingTopologiesApplication {
 // @formatter:on
 		};
 	}
-	Consumer<TopologyBuilder> auditSubscriberTopology() {
+	@Bean
+	public Consumer<TopologyBuilder> auditSubscriberTopology() {
 		return (builder) -> {
 // @formatter:off
 			String subscriber = "shipment-audit";
@@ -343,6 +344,8 @@ public class ManagingTopologiesApplication {
 			builder
 					.declareQueue(subscriber)
 					.boundTo(shipments)
+					.withPartitions(2)
+						.withPartitionKeyInMessageId()
 			;
 // @formatter:on
 		};
