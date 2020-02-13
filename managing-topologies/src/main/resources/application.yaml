@@ -1,0 +1,25 @@
+
+logging.level:
+  com.pivotal.rabbitmq.gettingstarted: debug
+
+rabbit:
+  default-endpoint-name: standalone
+  endpoints:
+    standalone:
+      port: 5672
+      managementPort: 15672
+
+role: plain-simple
+
+---
+spring.profiles: cluster
+
+rabbit:
+  default-endpoint-name: cluster
+  endpoints:
+    cluster:
+      addresses: localhost:5673,localhost:5674,localhost:5675
+      managementAddresses: localhost:15673,localhost:15674,locahost:15675
+
+
+

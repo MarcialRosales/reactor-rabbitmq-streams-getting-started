@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.pivotal.rabbitmq</groupId>
+		<artifactId>reactor-rabbitmq-streams-getting-started</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+	<groupId>com.pivotal.rabbitmq</groupId>
+	<artifactId>basic-send-receive</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>basic-send-receive</name>
+	<description>Demonstrate basic send and receive events</description>
+
+	<!-- It is not needed because it is inherited from parent. It is here only for the webinar
+
+	<dependencies>
+		<dependency>
+			<groupId>com.pivotal.rabbitmq</groupId>
+			<artifactId>reactor-rabbitmq-streams</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.pivotal.rabbitmq</groupId>
+			<artifactId>reactor-rabbitmq-streams-autoconfigure</artifactId>
+		</dependency>
+
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+				<dependency>
+					<groupId>com.pivotal.rabbitmq</groupId>
+					<artifactId>reactor-rabbitmq-streams</artifactId>
+					<version>0.0.3-SNAPSHOT</version>
+					<type>pom</type>
+					<scope>import</scope>
+				</dependency>
+			</dependencies>
+	</dependencyManagement>
+	-->
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests> <!-- tests are only for the webinar; not meant to be executed on every build -->
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

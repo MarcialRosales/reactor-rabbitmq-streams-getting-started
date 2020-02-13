@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.5.RELEASE</version>
+		<relativePath/>  <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.pivotal.rabbitmq</groupId>
+	<artifactId>reactor-rabbitmq-streams-getting-started</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>reactor-rabbitmq-streams-getting-started</name>
+	<description>Parent module for all getting started projects</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<avro.version>1.9.1</avro.version>
+	</properties>
+
+
+		<modules>
+			<module>basic-send-receive</module>
+			<module>reliable-send</module>
+			<module>reliable-receive</module>
+			<module>reliable-send-received</module>
+			<module>resilient-endpoint</module>
+			<module>managing-topologies</module>
+		</modules>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.pivotal.rabbitmq</groupId>
+			<artifactId>reactor-rabbitmq-streams-autoconfigure</artifactId>
+		</dependency>
+	</dependencies>
+
+	<dependencyManagement>
+		<dependencies>
+				<dependency>
+					<groupId>com.pivotal.rabbitmq</groupId>
+					<artifactId>reactor-rabbitmq-streams</artifactId>
+					<version>0.0.1</version>
+					<type>pom</type>
+					<scope>import</scope>
+				</dependency>
+			</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<defaultGoal>clean package</defaultGoal>
+		<plugins>
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+				</plugin>
+				<plugin>
+						 <groupId>org.apache.avro</groupId>
+						 <artifactId>avro-maven-plugin</artifactId>
+						 <version>${avro.version}</version>
+				 </plugin>
+		</plugins>
+</build>
+
+
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	  <repository>
+	    <id>rabbitmq-maven-milestones</id>
+	    <url>https://packagecloud.io/rabbitmq/maven-milestones/maven2</url>
+	    <releases>
+	      <enabled>true</enabled>
+	    </releases>
+	    <snapshots>
+	      <enabled>false</enabled>
+	    </snapshots>
+	  </repository>
+	</repositories>
+
+</project>

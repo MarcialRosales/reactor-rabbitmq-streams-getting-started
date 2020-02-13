@@ -1,0 +1,8 @@
+.mvn
+target
+.idea
+*.iml
+.gradle
+build
+pom.xml.releaseBackup
+**/schemas/*.java
