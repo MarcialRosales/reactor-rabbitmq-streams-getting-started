@@ -25,6 +25,7 @@
 
 		<modules>
 			<module>basic-send-receive</module>
+			<module>basic-send-receive-non-spring-boot</module>
 			<module>reliable-send</module>
 			<module>reliable-receive</module>
 			<module>reliable-send-received</module>

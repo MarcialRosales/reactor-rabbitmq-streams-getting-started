@@ -1,0 +1,19 @@
+<configuration debug="false" scan="false" >
+    <property name="LOG_DIR" value="logs" />
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender" target="System.out">
+        <encoder>
+            <charset>UTF-8</charset>
+            <Pattern>%d %-4relative [%thread] %-5level %logger{35} - %msg%n
+            </Pattern>
+        </encoder>
+    </appender>
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+    <root level="error">
+        <appender-ref ref="ASYNC_CONSOLE" />
+    </root>
+    <logger name="com.pivotal.rabbitmq" level="debug" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+</configuration>
