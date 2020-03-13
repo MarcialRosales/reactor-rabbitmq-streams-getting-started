@@ -1,9 +1,17 @@
+spring:
+  application:
+    name: ${role}
 
 logging.level:
   com.pivotal.rabbitmq.gettingstarted: debug
+  com.pivotal.rabbitmq.schema.SchemaManager: debug
 
 rabbit:
   default-endpoint-name: standalone
+  schema:
+    registryURL: http://localhost:8990
+    schemaRegistryStrategy: alwaysRegisterIfNotPresent  # default value
+    autoLoadSchemas: false
   endpoints:
     standalone:
       port: 5672

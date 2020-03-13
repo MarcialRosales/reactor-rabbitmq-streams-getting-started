@@ -1,0 +1,19 @@
+logging:
+  pattern.console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-40.40logger{1}){cyan} %msg %n"
+  level:
+    com.pivotal.rabbitmq.gettingstarted: debug
+    com.pivotal.rabbitmq.stream: warn
+
+rabbit:
+  default-endpoint-name: standalone
+  endpoints:
+    standalone:
+      port: 5672
+      managementPort: 15672
+#  schema:
+#    registryURL: http://localhost:8081
+
+
+role: producerStreamOfCustomer
+#role: consumerStreamOfCustomer
+#role: consumerStreamOfGenericRecord

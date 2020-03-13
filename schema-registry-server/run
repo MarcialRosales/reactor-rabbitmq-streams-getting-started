@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -x
+SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+[[ -z "$CLEAN" ]] || (cd $SCRIPT; mvn clean)
+
+[[ -f $SCRIPT/target/schema-registry-server.jar ]] || (cd $SCRIPT; mvn package)
+java -jar $SCRIPT/target/schema-registry-server.jar $@

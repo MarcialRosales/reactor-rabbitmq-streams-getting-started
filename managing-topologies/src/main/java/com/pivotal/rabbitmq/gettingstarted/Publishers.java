@@ -74,21 +74,6 @@ public class Publishers {
 			;
 		};
 	}
-	@Bean
-	@ConditionalOnProperty(name = "role", havingValue = "auditor", matchIfMissing = false)
-	public CommandLineRunner auditor(
-			@Qualifier("auditSubscriberTopology")Consumer<TopologyBuilder> auditTopology) {
-		return (args) -> {
-			rabbit
-					.declareTopology(auditTopology)
-					.createTransactionalConsumerStream("shipment-audit", GenericData.Record.class)
-					.receive()
-					.doOnNext(txShipment -> log.info("Received shipment {} - {}.{}", txShipment.get().get("id"),
-							txShipment.get().get("category_1"), txShipment.get().get("category_2")))
-					.subscribe(Transaction::commit);
-
-		};
-	}
 
 	static class ShipmentMetadata {
 		public static Function<Shipment, String> routingKey() {

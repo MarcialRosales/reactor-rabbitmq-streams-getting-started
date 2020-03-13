@@ -6,11 +6,14 @@ import java.util.function.Function;
 
 import com.pivotal.rabbitmq.RabbitEndpointService;
 import com.pivotal.rabbitmq.ReactiveRabbit;
+import com.pivotal.rabbitmq.stream.Transaction;
 import com.pivotal.rabbitmq.topology.MessageSelector;
 import com.pivotal.rabbitmq.topology.Topology;
 import com.pivotal.rabbitmq.topology.TopologyBuilder;
+import org.apache.avro.generic.GenericData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import reactor.core.publisher.Flux;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -400,6 +403,21 @@ public class ManagingTopologiesApplication {
 						.boundTo(subscriber_non_urgent)
 			;
 // @formatter:on
+		};
+	}
+	@Bean
+	@ConditionalOnProperty(name = "role", havingValue = "auditor", matchIfMissing = false)
+	public CommandLineRunner auditor(
+			@Qualifier("auditSubscriberTopology")Consumer<TopologyBuilder> auditTopology) {
+		return (args) -> {
+			rabbit
+					.declareTopology(auditTopology)
+					.createTransactionalConsumerStream("shipment-audit", GenericData.Record.class)
+					.receive()
+					.doOnNext(txShipment -> log.info("Received shipment {} - {}.{}", txShipment.get().get("id"),
+							txShipment.get().get("category_1"), txShipment.get().get("category_2")))
+					.subscribe(Transaction::commit);
+
 		};
 	}
 

@@ -1,0 +1,10 @@
+{
+  "namespace" : "com.pivotal.rabbitmq.gettingstarted.schemas",
+  "type" : "record",
+  "name" : "Customer",
+  "fields" : [
+    {"name":"id","type":"string"},
+    {"name":"name", "type":"string"},
+    {"name": "email", "type":  "string", "default": "nobody@nowhere.com"}
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "namespace" : "schemas.event.v7",
+  "type" : "record",
+  "name" : "Event",
+  "fields" : [
+   {"name":"number","type":"long"}
+  ]
+}

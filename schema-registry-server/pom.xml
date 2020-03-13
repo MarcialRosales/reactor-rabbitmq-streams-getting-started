@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.5.RELEASE</version>
+	</parent>
+	<groupId>com.pivotal.rabbitmq</groupId>
+	<artifactId>schema-registry-server</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>schema-registry-server</name>
+	<description>Central schema registry server</description>
+
+
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-schema-registry-server</artifactId>
+				<version>1.0.2.RELEASE</version>
+			</dependency>
+		</dependencies>
+		<build>
+			<defaultGoal>clean package</defaultGoal>
+			<finalName>schema-registry-server</finalName>
+			<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+					</plugin>
+			</plugins>
+
+		</build>
+
+</project>

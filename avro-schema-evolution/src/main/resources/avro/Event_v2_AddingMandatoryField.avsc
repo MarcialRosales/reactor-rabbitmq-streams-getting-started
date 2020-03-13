@@ -1,0 +1,10 @@
+{
+  "namespace" : "schemas.event.v2",
+  "type" : "record",
+  "name" : "Event",
+  "fields" : [
+    {"name":"id","type":"string"},
+    {"name":"timestamp","type":"long", "default": 0},
+    {"name":"number","type":"long"}
+  ]
+}

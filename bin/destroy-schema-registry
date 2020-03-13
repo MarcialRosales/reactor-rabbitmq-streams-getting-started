@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+echo "Stopping Schema Registry Server ...."
+
+pkill -f schema-registry-server-0.0.1-SNAPSHOT
