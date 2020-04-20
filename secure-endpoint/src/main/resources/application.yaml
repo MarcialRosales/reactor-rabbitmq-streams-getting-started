@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: secure-endpoint
+
+logging:
+  pattern.console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-40.40logger{1}){cyan} %msg %n"
+  level:
+    com.pivotal.rabbitmq.gettingstarted: debug
+    com.pivotal.rabbitmq.stream: warn
+
+rabbit:
+  default-endpoint-name: standalone
+  endpoints:
+    standalone:
+      host: localhost
+
+
+spring.profiles.active: tls
+
+---
+spring.profiles: tls
+rabbit:
+  endpoints:
+    standalone:
+      preferredSecure: true
+      ssl:
+        trustStore: ../bin/trusted/basic/result/truststore
+        trustStorePassword: bunnies
+
+---
+spring.profiles: mtls-with-trusted-client
+spring.profiles.include: tls
+rabbit:
+  endpoints:
+    standalone:
+      ssl:
+        keyStorePassword: bunnies
+        keyStore: ../getting-started/bin/trusted/basic/result/client_key.p12
+
+---
+spring.profiles: mtls-with-untrusted-client
+spring.profiles.include: tls
+rabbit:
+  endpoints:
+    standalone:
+      ssl:
+        keyStorePassword: bunnies
+        keyStore: ../getting-started/bin/selfsigned/basic/result/client_key.p12
+

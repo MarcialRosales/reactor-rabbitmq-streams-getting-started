@@ -2,9 +2,7 @@ package com.pivotal.rabbitmq.gettingstarted;
 
 import com.pivotal.rabbitmq.RabbitEndpointService;
 import com.pivotal.rabbitmq.gettingstarted.schemas.Shipment;
-import com.pivotal.rabbitmq.stream.Transaction;
 import com.pivotal.rabbitmq.topology.TopologyBuilder;
-import org.apache.avro.generic.GenericData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -25,20 +25,19 @@ import static com.pivotal.rabbitmq.topology.ExchangeType.fanout;
 import static java.time.Duration.ofSeconds;
 
 @SpringBootApplication
-public class ResilientEndpointApplication {
+public class SecureEndpointApplication {
 
-	private static Logger log = LoggerFactory.getLogger(ResilientEndpointApplication.class);
+	private static Logger log = LoggerFactory.getLogger(SecureEndpointApplication.class);
 
 	@Autowired
 	RabbitEndpointService rabbit;
 
 	public static void main(String[] args) {
-		SpringApplication.run(ResilientEndpointApplication.class, args);
+		SpringApplication.run(SecureEndpointApplication.class, args);
 	}
 
 	@Bean
-	@ConditionalOnProperty(name = "role", havingValue = "resilient-producer-consumer", matchIfMissing = false)
-	public CommandLineRunner resilientProducerConsumer() {
+	public CommandLineRunner run() {
 		return (args) -> {
 			int count = 1000;
 			Duration senderDelay = Duration.ofMillis(250);
@@ -50,11 +49,11 @@ public class ResilientEndpointApplication {
 			Flux<Integer> data = Flux.range(1, count).delayElements(senderDelay);
 			pipelines.add(rabbit
 					.declareTopology((b) -> b
-							.declareExchange("resilient-producer")
+							.declareExchange("secure-exchange")
 							.type(fanout))
 					.createProducerStream(Integer.class)
 					.route()
-						.toExchange("resilient-producer")
+						.toExchange("secure-exchange")
 					.then()
 					.send(data)
 					.doOnNext(integer -> log.debug("Sent: {}", integer))
@@ -62,14 +61,13 @@ public class ResilientEndpointApplication {
 
 			pipelines.add(rabbit
 					.declareTopology((b)->b
-						.declareQueue("resilient-consumer")
+						.declareQueue("secure-queue")
 							.classic()
 								.withReplicas(1)
 								.and()
-							.boundTo("resilient-producer"))
-					.createTransactionalConsumerStream("resilient-consumer", Integer.class)
+							.boundTo("secure-exchange"))
+					.createTransactionalConsumerStream("secure-queue", Integer.class)
 					.receive()
-					.transform(eliminateDuplicates())
 					.doOnNext(Transaction::commit)
 					.doOnNext(txInt -> waitForIntegers.countDown())
 					.transform(logReceivedIntegersAfterDuration(ofSeconds(5)))
@@ -81,14 +79,7 @@ public class ResilientEndpointApplication {
 			pipelines.dispose();
 		};
 	}
-	private Function<Flux<Transaction<Integer>>, Flux<Transaction<Integer>>> eliminateDuplicates() {
-		return (stream) -> {
-			Set<Integer> receivedIntegers = new HashSet<>();
-			return stream
-					.filter(txInt -> receivedIntegers.add(txInt.get()))
-					.doOnDiscard(Transaction.class, Transaction::commit);
-		};
-	}
+
 	private Function<Flux<Transaction<Integer>>, Flux<Long>> logReceivedIntegersAfterDuration(Duration duration) {
 		return (stream) -> {
 			return stream.window(duration)
@@ -100,21 +91,5 @@ public class ResilientEndpointApplication {
 		};
 	}
 
-	@Bean
-	@ConditionalOnProperty(name = "role", havingValue = "resilient-declare", matchIfMissing = false)
-	public CommandLineRunner createSimpleTopology() {
-		// @formatter:off
-		return (args) -> {
-
-			Topology provisionedTopology = rabbit
-					.manageTopologies()
-					.declare(b->b.declareExchange("resilient-declare")
-							.withAlternateExchange("resilient-declare-ae")) // to force a policy creation
-					.block();
-
-			log.info("Topology provisioned\n{}", provisionedTopology);
-		};
-		// @formatter:on
-	}
 
 }

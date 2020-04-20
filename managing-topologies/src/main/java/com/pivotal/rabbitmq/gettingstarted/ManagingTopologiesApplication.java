@@ -1,9 +1,5 @@
 package com.pivotal.rabbitmq.gettingstarted;
 
-import java.time.Duration;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
 import com.pivotal.rabbitmq.RabbitEndpointService;
 import com.pivotal.rabbitmq.ReactiveRabbit;
 import com.pivotal.rabbitmq.stream.Transaction;
@@ -13,16 +9,16 @@ import com.pivotal.rabbitmq.topology.TopologyBuilder;
 import org.apache.avro.generic.GenericData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
-import reactor.core.publisher.Flux;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
+
+import java.util.function.Consumer;
 
 import static com.pivotal.rabbitmq.topology.ExchangeType.*;
 import static com.pivotal.rabbitmq.topology.Queue.MaxLengthStrategy.rejectPublishDlx;
@@ -44,7 +40,6 @@ public class ManagingTopologiesApplication {
 		// @formatter:off
 		return (args) -> {
 
-			log.info("Rabbit port\n{}", rabbit.getProperties().getPort());
 			Topology provisionedTopology = rabbit
 					.manageTopologies()
 					.declare(simpleTopology("plain-simple"))

@@ -6,3 +6,7 @@ target
 build
 pom.xml.releaseBackup
 **/schemas/*.java
+bin/nohup.out
+bin/tls-gen
+bin/trusted
+bin/selfsigned
