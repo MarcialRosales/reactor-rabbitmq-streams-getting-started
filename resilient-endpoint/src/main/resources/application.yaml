@@ -26,14 +26,7 @@ rabbit:
 spring.profiles: retry-2-times
 rabbit:
   endpoints:
-    standalone:
+    default:
       connection:
         retryMax: 2
-        timeout: 5s
-        randomBackoff:
-          firstBackoff:
-          maxBackoff:
-    cluster:
-      connection:
-        retryMax: 2
-        timeout: 5s
+        

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+#cf create-service p.rabbitmq single-node rabbit -c '{"tls": true}'
+# or cf update-service rabbit -c '{"tls": true}'
+
+#./cf-wait-for-service rabbitmq
+cf service rabbit
+
+mvn
+cf push -f consumer/manifest.yml
+cf push -f processor/manifest.yml
+cf push -f supplier/manifest.yml

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.pivotal.rabbitmq</groupId>
-		<artifactId>reactor-rabbitmq-streams-getting-started</artifactId>
+		<artifactId>reactor-rabbitmq-streams-getting-started-common-spring-boot</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>
@@ -12,29 +12,28 @@
 	<artifactId>avro-schema-evolution</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>avro-schema-evolution</name>
-	<description>Demo project for Spring Boot</description>
-
-
+	
 	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.avro</groupId>
-				<artifactId>avro-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>schema</goal>
-						</goals>
-						<configuration>
-							<sourceDirectory>${project.basedir}/src/main/resources/avro/</sourceDirectory>
-							<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.avro</groupId>
+					<artifactId>avro-maven-plugin</artifactId>
+					<executions>
+						<execution>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>schema</goal>
+							</goals>
+							<configuration>
+								<sourceDirectory>${project.basedir}/src/main/resources/avro/</sourceDirectory>
+								<outputDirectory>${project.basedir}/src/main/java/</outputDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
 
+			</plugins>
+
+	</build>
 
 </project>

@@ -1,0 +1,9 @@
+---
+applications:
+- name: cf-supplier
+  path: target/supplier-0.0.1-SNAPSHOT.jar
+  health-check-type: process
+  env:
+    JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: '[enabled: false]'
+  services:
+   - rabbit

@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>com.pivotal.rabbitmq</groupId>
-		<artifactId>reactor-rabbitmq-streams-getting-started</artifactId>
+		<artifactId>reactor-rabbitmq-streams-getting-started-common-spring-boot</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../</relativePath>
 	</parent>

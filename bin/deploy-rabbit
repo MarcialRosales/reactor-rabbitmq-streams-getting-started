@@ -18,10 +18,8 @@ function start {
   echo "Launching $SERVER_NAME on ports amqp: $AMQP_PORT ; amqps: $AMQPS_PORT ; http: $HTTP_PORT ; https: $HTTPS_PORT ...."
   echo " using ${RABBITMQ_CONF:-rabbitmq.conf}"
 
-  echo "RECREATE_ALL_SECRETS: ${RECREATE_ALL_SECRETS}"
-
   if [ ${RECREATE_ALL_SECRETS:-false} == "true" ]; then
-    echo "Deleting All secrets"
+    echo "Recreating all keys and certificates"
     rm -rf $TRUSTED_DIR $SELF_SIGNED_DIR
   fi
 

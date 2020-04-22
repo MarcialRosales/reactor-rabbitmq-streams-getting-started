@@ -1,0 +1,9 @@
+---
+applications:
+- name: cf-processor
+  path: target/processor-0.0.1-SNAPSHOT.jar
+  health-check-type: process
+  env:
+    JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: '[enabled: false]'
+  services:
+   - rabbit
