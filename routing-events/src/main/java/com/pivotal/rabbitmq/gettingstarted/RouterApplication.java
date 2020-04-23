@@ -50,7 +50,9 @@ public class RouterApplication {
 						.header("category_2", category2())
 					.and()
 					.route()	// Dynamic Routing based on business rules
-						.toExchange(routingTable.VOLUME_EXCHANGE)
+						.toExchange("") 				// default exchange
+						// .toExchange("volume")		// use volume exchange
+						// .useExchangeSelector(routingTable.exchangeSelector())  // dynamic exchange selection
 						.withRoutingKey(routingTable.routingKeySelector())
 					.then()		// We can skip/drop shipments we do not need to send based on some criteria
 					.send(shipments.filter(skipShipmentWithUnknownTransport()))
