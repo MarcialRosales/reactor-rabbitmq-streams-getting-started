@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: router
+
+logging.level:
+  com.pivotal.rabbitmq.gettingstarted: debug
+  com.pivotal.rabbitmq.schema.SchemaManager: debug
+
+rabbit:
+  schema:
+    registryURL: http://localhost:8990
+    schemaRegistryStrategy: alwaysRegisterIfNotPresent  # default value
+
