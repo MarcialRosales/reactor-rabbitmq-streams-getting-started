@@ -32,7 +32,7 @@ public class SupplierApplication {
         };
     }
 
-    @Bean
+    @Bean("numbers")
     public Supplier<Flux<Integer>> eventSupplier() {
         return () -> {
             return Flux.range(1, Integer.MAX_VALUE).delayElements(this.delay).doOnNext((e) -> {

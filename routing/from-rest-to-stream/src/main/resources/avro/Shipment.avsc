@@ -1,0 +1,13 @@
+{
+  "namespace" : "com.pivotal.rabbitmq.gettingstarted.schemas",
+  "type" : "record",
+  "name" : "Shipment",
+  "fields" : [
+    {"name":"id","type":"string"},
+    {"name":"category_1", "type":"string"},
+    {"name":"category_2", "type":"string", "default": "normal"},
+    {"name":"transport", "type":"string", "default": "unknown"},
+    {"name":"value", "type":"double", "default": 0.0}
+  ]
+
+}

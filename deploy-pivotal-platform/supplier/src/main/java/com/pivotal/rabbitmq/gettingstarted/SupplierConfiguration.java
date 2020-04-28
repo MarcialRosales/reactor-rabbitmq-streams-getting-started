@@ -6,6 +6,7 @@ import com.pivotal.rabbitmq.topology.TopologyBuilder;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +24,7 @@ public class SupplierConfiguration {
     @Bean
     public Disposable stream(Consumer<TopologyBuilder> topology,
                              @Value("${output:numbers}") String exchange,
-                             Supplier<Flux<Integer>> supplier) {
+                             @Qualifier("numbers") Supplier<Flux<Integer>> supplier) {
         return this.rabbit
                 .declareTopology(topology)
                 .createProducerStream(Integer.class)

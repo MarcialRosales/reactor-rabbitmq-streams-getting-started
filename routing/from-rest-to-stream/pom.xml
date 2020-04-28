@@ -6,14 +6,19 @@
 		<groupId>com.pivotal.rabbitmq</groupId>
 		<artifactId>reactor-rabbitmq-streams-getting-started-common-spring-boot</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../common-spring-boot</relativePath>
+		<relativePath>../../common-spring-boot</relativePath>
 	</parent>
 	<groupId>com.pivotal.rabbitmq</groupId>
-	<artifactId>managing-topologies</artifactId>
+	<artifactId>from-rest-to-stream</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>managing-topologies</name>
-	<description>Demo project for Spring Boot</description>
+	<name>from-rest-to-stream</name>
 
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+	</dependencies>
 		<build>
 				<plugins>
 					<plugin>

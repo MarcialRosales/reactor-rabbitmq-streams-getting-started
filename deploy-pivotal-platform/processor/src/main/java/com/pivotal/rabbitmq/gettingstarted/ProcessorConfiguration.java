@@ -11,6 +11,7 @@ import java.util.function.Function;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,13 +30,15 @@ public class ProcessorConfiguration {
     }
 
     @Bean
-    public Disposable stream(Consumer<TopologyBuilder> topology, @Value("${input:numbers}") String input, @Value("${output:doublenumbers}") String exchange, Function<Integer, Integer> processor) {
+    public Disposable stream(Consumer<TopologyBuilder> topology,
+                             @Value("${input:numbers}") String input,
+                             @Value("${output:doublenumbers}") String exchange,
+                             @Qualifier("multiplier") Function<Integer, Integer> processor) {
         assert processor != null;
 
         Flux<Transaction<Integer>> inputStream = this.rabbit
                 .declareTopology(topology)
                 .createTransactionalConsumerStream(input, Integer.class)
-                    .withPrefetch(20).ackEvery(10, Duration.ofSeconds(1L))
                 .receive()
                 .<Transaction<Integer>>handle((tx, sink) -> {
                     try {
@@ -48,9 +51,9 @@ public class ProcessorConfiguration {
                 });
 
         return this.rabbit
-                .declareTopology(TopologyBuilder.NONE)
+                .declareTopology(topology)
                 .createTransactionalProducerStream(Integer.class)
-                .route().toExchange(exchange)
+                    .route().toExchange(exchange)
                 .then()
                 .send(inputStream).doOnNext((tx) -> log.info("Sent {}", tx.get()))
                 .subscribe(Transaction::commit);

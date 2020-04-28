@@ -25,6 +25,7 @@
 			<module>avro-schema-evolution</module>
 			<module>secure-endpoint</module>
 			<module>deploy-pivotal-platform</module>
+			<module>routing</module>
 		</modules>
 
 	<build>

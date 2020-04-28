@@ -22,7 +22,8 @@ public class ProcessorApplication {
     }
 
     @Bean
-    public Consumer<TopologyBuilder> topology(@Value("${output:doublenumbers}") String output, @Value("${input:numbers}") String input) {
+    public Consumer<TopologyBuilder> topology(@Value("${output:doublenumbers}") String output,
+                                              @Value("${input:numbers}") String input) {
         return (builder) -> {
             builder.declareExchange(input)
                     .and()
@@ -33,8 +34,8 @@ public class ProcessorApplication {
         };
     }
 
-    @Bean
-    public Function<Integer, Integer> processor() {
+    @Bean("multiplier")
+    public Function<Integer, Integer> multiplier() {
         return (e) -> {
             return e * 2;
         };

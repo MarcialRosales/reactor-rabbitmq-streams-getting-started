@@ -14,12 +14,36 @@
 	<name>common-spring-boot</name>
 	<packaging>pom</packaging>
 
+	<properties>
+		<spring.version>2.2.6.RELEASE</spring.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.pivotal.rabbitmq</groupId>
 			<artifactId>reactor-rabbitmq-streams-autoconfigure</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<version>${spring.version}</version>		
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>${spring.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-webflux</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<build>
 		<defaultGoal>clean install</defaultGoal>
@@ -27,7 +51,7 @@
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
-					<version>2.1.5.RELEASE</version>
+					<version>${spring.version}</version>
 					<executions>
                     <execution>
                         <goals>
