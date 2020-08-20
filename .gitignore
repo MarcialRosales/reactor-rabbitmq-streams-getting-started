@@ -10,3 +10,4 @@ bin/nohup.out
 bin/tls-gen
 bin/trusted
 bin/selfsigned
+nohup.out
