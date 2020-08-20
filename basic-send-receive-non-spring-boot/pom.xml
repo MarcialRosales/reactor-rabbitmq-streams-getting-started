@@ -6,7 +6,7 @@
 		<groupId>com.pivotal.rabbitmq</groupId>
 		<artifactId>reactor-rabbitmq-streams-getting-started-common</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../</relativePath>
+		<relativePath>../common</relativePath>
 	</parent>
 	<groupId>com.pivotal.rabbitmq</groupId>
 	<artifactId>basic-send-receive-non-spring-boot</artifactId>

@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: basic
+
+logging:
+  pattern.console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-40.40logger{1}){cyan} %msg %n"
+  level:
+    com.pivotal.rabbitmq.gettingstarted: debug
+    com.pivotal.rabbitmq.stream: warn
+
+type: throughput
+
+rabbit:
+  default-endpoint-name: standalone
+  streams:
+    sender:
+#      max-in-flight:
+    receiver:
+#      ack-every: 10
+#      ack-after: 1s
+
+  endpoints:
+    standalone:
+      host: localhost
