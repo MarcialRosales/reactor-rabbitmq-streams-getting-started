@@ -18,6 +18,7 @@ import java.util.function.Consumer;
 
 @Configuration
 public class PublisherConfiguration {
+
     @Bean
     @ConditionalOnProperty(name = "role", havingValue = "publisher", matchIfMissing = false)
     public CommandLineRunner publisher(Consumer<TopologyBuilder> topology) {
@@ -42,14 +43,6 @@ public class PublisherConfiguration {
 // @formatter:on
         };
     }
-
-
-/*
-                .whenUnroutable()
-                    .alwaysRetry(Duration.ofSeconds(2))
-                .then();
-
- */
 
     @Autowired
     RabbitEndpointService rabbit;

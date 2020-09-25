@@ -1,8 +1,6 @@
 package com.pivotal.rabbitmq.gettingstarted;
 
 import com.pivotal.rabbitmq.topology.TopologyBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,18 +17,9 @@ import java.util.function.Consumer;
 @SpringBootApplication
 public class BasicSendAndReceiveApplication {
 
-	private static Logger log = LoggerFactory.getLogger(BasicSendAndReceiveApplication.class);
-
 	public static void main(String[] args) {
 		SpringApplication.run(BasicSendAndReceiveApplication.class, args);
 	}
-
-
-
-
-
-
-
 
 	@Bean
 	@ConditionalOnProperty(name = "role", havingValue = "help", matchIfMissing = true)
@@ -40,23 +29,6 @@ public class BasicSendAndReceiveApplication {
 			System.out.println("./run --role=publisher [--exchange=reactive-text] [--count=10] [--delay=10s]");
 			System.out.println("./run --role=consumer [--queue=reactive-text] [--exchange=reactive-text]");
 		} ;
-	}
-
-	@Value("${exchange:numbers}")
-	String NUMBERS;
-	@Value("${queue:numbers}")
-	String CONSUMER;
-
-	@Bean
-	public Consumer<TopologyBuilder> topology() {
-		// @formatter:off
-		return (builder) -> builder
-				.declareExchange(NUMBERS)
-				.and()
-				.declareQueue(CONSUMER)
-					.boundTo(NUMBERS)
-					.withMaxLength(5);
-		// @formatter:on
 	}
 
 

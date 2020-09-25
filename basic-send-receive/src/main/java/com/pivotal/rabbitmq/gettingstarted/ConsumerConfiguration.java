@@ -20,6 +20,7 @@ public class ConsumerConfiguration {
     @Bean
     @ConditionalOnProperty(name = "role", havingValue = "consumer", matchIfMissing = false)
     public CommandLineRunner consumer(Consumer<TopologyBuilder> topology) {
+// @formatter:off
         return (args) -> {
             ConsumerStream<Integer> consumerStream = rabbit
                     .declareTopology(topology)
@@ -30,9 +31,8 @@ public class ConsumerConfiguration {
                     .doOnNext(number -> log.info("Received: {}", number))
                     .subscribe();
         };
+// @formatter:on
     }
-
-
 
     @Autowired
     RabbitEndpointService rabbit;
