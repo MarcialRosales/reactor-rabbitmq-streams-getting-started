@@ -1,1 +1,5 @@
-./run --role=receiveMultipliedNumbers
+#!/usr/bin/env bash
+
+SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+$SCRIPT/run --role=receiveMultipliedNumbers

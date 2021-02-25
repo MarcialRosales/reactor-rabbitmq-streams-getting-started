@@ -38,7 +38,7 @@
 				<dependency>
 					<groupId>com.pivotal.rabbitmq</groupId>
 					<artifactId>reactor-rabbitmq-streams</artifactId>
-					<version>0.0.7</version>
+					<version>0.0.8</version>
 					<type>pom</type>
 					<scope>import</scope>
 				</dependency>
@@ -56,6 +56,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+		<!--
 		<repository>
 			<id>spring-milestones</id>
 			<name>Spring Milestones</name>
@@ -64,7 +65,16 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
-	</repositories>
+	-->
+		 <repository>
+				 <id>spring-snapshots</id>
+				 <name>Spring Snapshots</name>
+				 <url>https://repo.spring.io/libs-snapshot</url>
+				 <snapshots>
+						 <enabled>true</enabled>
+				 </snapshots>
+		 </repository>
+ 	</repositories>
 
 
 	<build>

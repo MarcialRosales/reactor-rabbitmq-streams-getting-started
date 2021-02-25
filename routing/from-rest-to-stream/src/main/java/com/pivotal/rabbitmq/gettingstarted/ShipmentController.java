@@ -30,10 +30,8 @@ public class ShipmentController {
                     log.info("Processing shipment request {} -> {}", r, id);
                     return newShipment(id, r);
                 })
-                .doOnNext(s -> {
-                    if (s.getId().hashCode() % 5 == 0) throw new RuntimeException("Some business rule failed");
-                })
                 .flatMap(r-> shipments.send(r))
+                .doOnNext(s -> log.info("Shipment {} sent ", s.getId()))
                 .map(this::toShipmentConfirmation)
                 ;
     }

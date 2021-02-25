@@ -8,11 +8,10 @@ logging:
     com.pivotal.rabbitmq.gettingstarted: debug
     com.pivotal.rabbitmq.stream: warn
 
-role: consumer
+role: publisher
 
 rabbit:
   default-endpoint-name: standalone
   endpoints:
     standalone:
       host: localhost
-      

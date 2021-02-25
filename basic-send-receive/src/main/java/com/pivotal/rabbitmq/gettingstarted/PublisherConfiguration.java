@@ -39,7 +39,7 @@ public class PublisherConfiguration {
             producerStream
                     .send(integers)
                     .doOnNext(data -> log.debug("Sent: {}", data))
-                    .subscribe();
+                    .blockLast();
 // @formatter:on
         };
     }

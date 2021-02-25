@@ -5,6 +5,7 @@ spring:
 logging.level:
   com.pivotal.rabbitmq.gettingstarted: debug
   com.pivotal.rabbitmq.schema.SchemaManager: debug
+  com.pivotal.rabbitmq: debug
 
 rabbit:
   schema:
