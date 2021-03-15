@@ -4,6 +4,7 @@ import com.pivotal.rabbitmq.RabbitEndpointService;
 import com.pivotal.rabbitmq.ReactiveRabbit;
 import com.pivotal.rabbitmq.stream.Transaction;
 import com.pivotal.rabbitmq.topology.MessageSelector;
+import com.pivotal.rabbitmq.topology.Queue;
 import com.pivotal.rabbitmq.topology.Topology;
 import com.pivotal.rabbitmq.topology.TopologyBuilder;
 import org.apache.avro.generic.GenericData;
@@ -50,6 +51,38 @@ public class ManagingTopologiesApplication {
 		// @formatter:on
 	}
 
+	@Bean
+	@ConditionalOnProperty(name = "role", havingValue = "quorum-queue", matchIfMissing = false)
+	public CommandLineRunner declareTopologyWithQuorumQueue() {
+		// @formatter:off
+		return (args) -> {
+
+			Topology provisionedTopology = rabbit
+					.manageTopologies()
+					.declare(simpleQuorumTopology("plain-quorum"))
+					.block();
+
+			log.info("Topology provisioned\n{}", provisionedTopology);
+		};
+		// @formatter:on
+	}
+
+	@Bean
+	@ConditionalOnProperty(name = "role", havingValue = "disk-only-quorum-queue", matchIfMissing = false)
+	public CommandLineRunner createTopologyWitheDiskOnlyQuorumQueue() {
+		// @formatter:off
+		return (args) -> {
+
+			Topology provisionedTopology = rabbit
+					.manageTopologies()
+					.declare(quorumDiskOnlyTopology("disk-only-quorum"))
+					.block();
+
+			log.info("Topology provisioned\n{}", provisionedTopology);
+		};
+		// @formatter:on
+	}
+
 	Consumer<TopologyBuilder> simpleTopology(String name) {
 		// @formatter:off
 		return (builder) -> builder
@@ -57,6 +90,28 @@ public class ManagingTopologiesApplication {
 						.and()
 						.declareQueue(name)
 							.boundTo(name);
+		// @formatter:on
+	}
+	Consumer<TopologyBuilder> simpleQuorumTopology(String name) {
+		// @formatter:off
+		return (builder) -> builder
+				.declareExchange(name)
+				.and()
+				.declareQueue(name).quorum()
+					.withReplicas(3)
+					.withDeliveryLimit(3)
+				.and()
+				.boundTo(name);
+		// @formatter:on
+	}
+	Consumer<TopologyBuilder> quorumDiskOnlyTopology(String name) {
+		// @formatter:off
+		return (builder) -> builder
+				.declareExchange(name)
+				.and()
+				.declareQueue(name).quorum().withDeliveryLimit(3).withMaxInMemoryLength(0)
+				.and()
+				.boundTo(name);
 		// @formatter:on
 	}
 
@@ -124,6 +179,34 @@ public class ManagingTopologiesApplication {
 		};
 	}
 
+	@Bean
+	@ConditionalOnProperty(name = "role", havingValue = "topologyWithQuorumPartitions", matchIfMissing = false)
+	public CommandLineRunner declareTopologyWithQuorumPartitions() {
+		// @formatter:on
+		return (args) -> {
+			Topology provisionedTopology = rabbit
+					.manageTopologies()
+					.declare(topologyWithQuorumPartitions("partitions-quorum-demo"))
+					.block();
+
+			log.info("Topology provisioned\n{}", provisionedTopology);
+		};
+		// @formatter:on
+	}
+
+	private Consumer<TopologyBuilder> topologyWithQuorumPartitions(String name) {
+		return (builder) -> {
+			// @formatter:off
+			builder
+					.declareExchange(name)
+					.and()
+					.declareQueue(name).quorum().and()
+					.boundTo(name)
+					.withPartitions(2)
+					.withPartitionKeyInMessageId();
+			// @formatter:on
+		};
+	}
 	@Autowired
 	ReactiveRabbit reactiveRabbit;
 
